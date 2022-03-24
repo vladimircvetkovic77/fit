@@ -37,7 +37,7 @@ class Card extends Model
      */
     public function visits()
     {
-        return $this->belongsToMany(Gym::class);
+        return $this->belongsToMany(Gym::class)->withTimestamps();
     }
 
     /**
@@ -47,8 +47,12 @@ class Card extends Model
      */
     public function isUsedToday()
     {
-        return $this->visits()->get()->map(function ($visit) {
-            return $visit->created_at->isToday();
+        $response = $this->visits()->get()->map(function ($visit) {
+            Log::info($visit);
+            return $visit->pivot->created_at->isToday();
         })->contains(true);
+
+        Log::info($response);
+        return $response;
     }
 }
